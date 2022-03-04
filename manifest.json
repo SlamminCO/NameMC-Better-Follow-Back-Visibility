@@ -1,7 +1,7 @@
 {
-    "manifest_version": 2,
+    "manifest_version": 3,
     "name": "NameMC Better Follow Back Visibility",
-    "version": "1.0",
+    "version": "1.1",
     "content_scripts": [
         {
           "matches": [
