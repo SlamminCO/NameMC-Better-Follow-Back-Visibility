@@ -1,0 +1,13 @@
+{
+    "manifest_version": 2,
+    "name": "NameMC Better Follow Back Visibility",
+    "version": "1.0",
+    "content_scripts": [
+        {
+          "matches": [
+            "https://namemc.com/profile/*/following*"
+          ],
+          "js": ["content.js"]
+        }
+      ]
+}
