@@ -5,6 +5,13 @@
  <img width="988" alt="image" src="https://user-images.githubusercontent.com/100872889/156706458-9f89e89a-1447-4680-a808-f74440cbe039.png">
  <img width="974" alt="image" src="https://user-images.githubusercontent.com/100872889/156706643-5efe5f2f-e352-44bc-b1d3-54b90921a1af.png">
 
+# Version 1.2
+You can now click the extension and toggle the ability to automatically unfollow non-followers!
+
+Note: *Due to the way NameMC handles button interactions, this function will refresh the page multiple times*
+
+<img width="340" alt="image" src="https://user-images.githubusercontent.com/100872889/157018456-f8567cd8-9b41-41c3-8a94-e089a58af18d.png">
+
 
 # Installation
  1. Click the green Code button and select Download Zip
