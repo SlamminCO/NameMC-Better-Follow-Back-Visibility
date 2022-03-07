@@ -1,0 +1,9 @@
+button.btn-not-follower { 
+	background-color: #DE1C3D;
+	border-color: #B21631;
+}
+
+button.btn-not-follower:hover {
+	background-color: #B21631;
+	border-color: #B21631;
+}
