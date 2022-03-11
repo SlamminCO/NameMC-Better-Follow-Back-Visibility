@@ -5,6 +5,18 @@
  <img width="988" alt="image" src="https://user-images.githubusercontent.com/100872889/156706458-9f89e89a-1447-4680-a808-f74440cbe039.png">
  <img width="974" alt="image" src="https://user-images.githubusercontent.com/100872889/156706643-5efe5f2f-e352-44bc-b1d3-54b90921a1af.png">
 
+# Version 1.3
+There's now a per-page unfollow non-followers button, clicking it will unfollow anyone on the current page who doesn't follow back.
+
+Note: *Due to the way NameMC handles button interactions, this function will refresh the page multiple times*
+
+<img width="686" alt="image" src="https://user-images.githubusercontent.com/100872889/157806163-6dc3728e-e6f8-4f57-9034-880c197c2927.png">
+
+Follow back status will now also show on every account regardless of ownership
+
+<img width="679" alt="image" src="https://user-images.githubusercontent.com/100872889/157806745-07413ada-d4a1-48bd-aaef-a90443dc4694.png">
+
+
 # Version 1.2
 You can now click the extension and toggle the ability to automatically unfollow non-followers!
 
