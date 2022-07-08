@@ -1,106 +1,138 @@
-let unfollowAllButton = document.querySelector("body > main > div.text-center.mb-3 > button.btn.btn-warning")
+function getFollowingList() {
+    let followingList = []
 
-if (unfollowAllButton) {
-    let parentNode = unfollowAllButton.parentNode
-    let newElement = document.createElement("button")
-    newElement.innerHTML = " Unfollow 0 Non-Followers "
+    const followButtonList = document.getElementsByClassName('btn btn-block btn-sm')
+
+    for (let i = 0; i < followButtonList.length; i++) {
+        const topElement = followButtonList[i].parentElement.parentElement
+        const usernameElement = topElement.children[2].children[0]
+        
+        followingList.push({
+            'username': usernameElement.innerText,
+            'followsBack': usernameElement.classList.contains('font-weight-bold'),
+            'topElement': topElement,
+            'button': followButtonList[i]
+        })
+    }
     
-    newElement.setAttribute("class", "btn btn-success btn-unf")
-    newElement.setAttribute("id", "btn-unf")
-    newElement.addEventListener("click", function (ev) {
+    return followingList
+}
+
+function addFollowingBackColumn(followingList) {
+    const followingTableHead = document.getElementsByClassName('table table-sm table-hover')[0].children[0]
+
+    for (let i = 0; i < followingTableHead.children.length; i++) {
+        const followingTableHeadRow = followingTableHead.children[i]
+
+        const newTH = document.createElement('th')
+
+        if (followingTableHeadRow.children[3].innerText != '') {
+            newTH.innerText = 'Follows Back'
+            newTH.classList.add('text-nowrap')
+        } else {
+            newTH.classList.add('border-bottom-0')
+        }
+
+        followingTableHeadRow.insertBefore(newTH, followingTableHeadRow.children[3])
+    }
+
+    for (let i = 0; i < followingList.length; i++) {
+        const followsBackTD = document.createElement('td')
+
+        if (!followingList[i]['followsBack']) {
+            followsBackTD.innerText = '❌ No'
+        } else {
+            followsBackTD.innerText = '✅ Yes'
+        }
+
+        followingList[i]['topElement'].insertBefore(followsBackTD, followingList[i]['topElement'].children[3])
+    }
+}
+
+function editFollowButtons(followingList) {
+    for (let i = 0; i < followingList.length; i++) {
+        if (!followingList[i]['followsBack']) {
+            followingList[i]['button'].classList.add('btn-not-follower')
+        }
+    }
+}
+
+function ownsCurrentPage() {
+    const pageOwner = document.getElementsByClassName('text-center text-nowrap')[0].children[0].innerText
+    const accountSwitcher = document.getElementsByClassName('nav-link dropdown-toggle text-nowrap pl-0')[0]
+
+    if (!accountSwitcher) return false
+
+    const signedInAccount = accountSwitcher.children[1].innerText
+
+    return pageOwner === signedInAccount
+}
+
+function addUnfollowNonFollowersButton(nonFollowerCount) {
+    const unfollowAllButton = document.getElementsByClassName('btn btn-warning')[0]
+
+    if (!unfollowAllButton) return
+
+    unfollowAllButton.style.margin = '3px'
+
+    const unfollowNonFollowersButton = document.createElement('button')
+    unfollowNonFollowersButton.innerText = `Unfollow ${nonFollowerCount} Non-follower${(nonFollowerCount != 1) ? 's' : ''}`
+    
+    unfollowNonFollowersButton.setAttribute('id', 'btn-unf')
+    unfollowNonFollowersButton.setAttribute('class', 'btn btn-success btn-unf btn-warning')
+    unfollowNonFollowersButton.addEventListener('click', (ev) => {
         chrome.storage.sync.set({ autoUnfollowCurrentPage: true })
         window.location.reload()
     })
-    parentNode.insertBefore(newElement, unfollowAllButton)
 
-    newElement = document.createElement("div")
+    unfollowNonFollowersButton.style.margin = '3px'
 
-    newElement.setAttribute("class", "text-center mb-3")
-    parentNode.insertBefore(newElement, unfollowAllButton)
+    unfollowAllButton.parentElement.insertBefore(unfollowNonFollowersButton, unfollowAllButton)
 }
 
-let topTable = document.querySelector("body > main > div > div.card.mb-3 > div.table-responsive > table.table.table-sm.table-hover > thead > tr > th.border-bottom-0.d-none.d-sm-table-cell")
+function getNonFollowers(followingList) {
+    let nonFollowerList = []
 
-if (topTable) {
-    let newElement1 = document.createElement("th")
-
-    newElement1.setAttribute("class", "border-bottom-0")
-    
-    let parentNode1 = topTable.parentNode
-    parentNode1.insertBefore(newElement1, topTable)
-}
-
-let bottomTable = document.querySelector("body > main > div > div.card.mb-3 > div.table-responsive > table.table.table-sm.table-hover > thead > tr > th.d-none.d-sm-table-cell.text-nowrap")
-
-if (bottomTable) {
-    
-    let newElement2 = document.createElement("th")
-    newElement2.innerHTML = "<a>Follows Back</a>"
-
-    newElement2.setAttribute("class", "text-nowrap")
-
-    let parentNode2 = bottomTable.parentNode
-
-    parentNode2.insertBefore(newElement2, bottomTable)
-}
-
-let users = {}
-let tables = document.querySelectorAll("tr > td")
-
-
-tables.forEach((value, key, parent) => {
-    let subElement = value.getElementsByTagName("a").item(0)
-    
-    if (!subElement || subElement.getAttribute("translate") != "no") return
-
-    users[subElement.getAttribute("title")] = {
-        "class": subElement.getAttribute("class"),
-        "dateElement": tables.item(key + 1),
-        "parentNode": tables.item(key + 1).parentNode,
-        "followButton": (unfollowAllButton) ? tables.item(key + 4).getElementsByTagName("button").item(0) : null
+    for (let i = 0; i < followingList.length; i++) {
+        if (followingList[i]['followsBack']) continue
+        nonFollowerList.push(followingList[i])
     }
-})
 
-let nonFollowers = 0
-
-for (const user in users) {
-    let isFollowing = (users[user]["class"].search("font-weight-bold") > -1) ? true : false
-    let src = (isFollowing) ? "https://s.namemc.com/img/emoji/twitter/2705.svg" : "https://s.namemc.com/img/emoji/twitter/274c.svg"
-    let alt = (isFollowing) ? "✅" : "❌"
-    let txt = (isFollowing) ? "Yes" : "No"
-    let newElement = document.createElement("td")
-    newElement.innerHTML = `<img class="emoji" draggable="false" src=${src} alt=${alt}> <b>${txt}</b>`
-
-    newElement.setAttribute("translate", "no")
-    users[user]["parentNode"].insertBefore(newElement, users[user]["dateElement"])
-    
-    if (!isFollowing && unfollowAllButton) {
-        users[user]["followButton"].setAttribute("class", `${users[user]["followButton"].getAttribute("class")} btn-not-follower`)
-        
-        nonFollowers += 1
-        document.getElementById("btn-unf").innerHTML = ` Unfollow ${nonFollowers} Non-Follower${(nonFollowers > 1) ? "s" : ""} `
-    }
+    return nonFollowerList
 }
 
-if (unfollowAllButton) {
+function autoUnfollowProcess(nonFollowerList) {
     chrome.storage.sync.get("autoUnfollowCurrentPage", (data) => {
-        let autoUnfollowCurrentPage = data["autoUnfollowCurrentPage"]
+        const autoUnfollowCurrentPage = data["autoUnfollowCurrentPage"]
         
-        if (nonFollowers == 0 && autoUnfollowCurrentPage) {
+        if (nonFollowerList.length == 0 && autoUnfollowCurrentPage) {
             chrome.storage.sync.set({ autoUnfollowCurrentPage: false })
         }
 
         chrome.storage.sync.get("autoUnfollow", (data) => {
-            let autoUnfollow = data["autoUnfollow"]
+            const autoUnfollow = data["autoUnfollow"]
 
-
-            if ((autoUnfollow || autoUnfollowCurrentPage) && nonFollowers > 0) {
-                for (const user in users) {
-                    if (users[user]["class"].search("font-weight-bold") == -1) {
-                        users[user]["followButton"].click()
-                    }
+            if ((autoUnfollow || autoUnfollowCurrentPage) && nonFollowerList.length > 0) {
+                for (let i = 0; i < nonFollowerList.length; i++) {
+                    nonFollowerList[i]['button'].click()
                 }
             }
         })
     })
 }
+
+function main() {
+    const isOwner = ownsCurrentPage()
+    const followingList = getFollowingList()
+    const nonFollowerList = getNonFollowers(followingList)
+    
+    if (isOwner) editFollowButtons(followingList)
+
+    addFollowingBackColumn(followingList)
+
+    if (isOwner) addUnfollowNonFollowersButton(nonFollowerList.length)
+
+    if (isOwner) autoUnfollowProcess(nonFollowerList)
+}
+
+main()
