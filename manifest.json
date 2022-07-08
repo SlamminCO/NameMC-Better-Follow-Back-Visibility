@@ -1,7 +1,7 @@
 {
     "manifest_version": 3,
     "name": "NameMC Better Follow Back Visibility",
-    "version": "1.3",
+    "version": "1.4",
     "action": {
       "default_popup": "popup.html"
     },
